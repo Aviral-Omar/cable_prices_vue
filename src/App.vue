@@ -50,6 +50,14 @@ export default {
         });
         const bqList = await (await fetch('http://localhost:3000/bouquets')).json();
         bqList.forEach(bouquet => {
+          bouquet.channelCount = 0;
+          bouquet.channels.forEach(channel => {
+            chList.forEach(ch => {
+              if (ch._id === channel) {
+                bouquet.channelCount += ch.quality === 'HD' ? 2 : 1;
+              }
+            });
+          });
           if (!this.bouquets[bouquet.provider]) {
             this.bouquets[bouquet.provider] = [];
           }
@@ -83,6 +91,7 @@ body {
 
 #channel-lists {
   display: flex;
+  width: 100%;
   flex-flow: row wrap;
   justify-content: center;
   overflow: scroll;

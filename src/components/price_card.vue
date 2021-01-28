@@ -1,6 +1,7 @@
 <template>
   <section class="card" id="price-card">
     <h3>Price: {{ price }}</h3>
+    <h3>Number of Channels: {{ channelCount }}</h3>
     <button @click="calculatePrice">Calculate Price</button>
     <section class="detail-section">
       <div>
@@ -25,6 +26,7 @@ export default {
   data() {
     return {
       price: 0,
+      channelCount: 0,
       checkedChannels: {},
       selectedBouquets: [],
       alcChannels: [],
@@ -35,6 +37,7 @@ export default {
       this.price = 0;
       this.selectedBouquets = [];
       this.alcChannels = [];
+      this.channelCount = 0;
       Object.entries(this.channels).forEach(channelSet => {
         this.checkedChannels[channelSet[0]] = channelSet[1].filter(channel => channel.isChecked);
       });
@@ -43,22 +46,25 @@ export default {
           this.calcBouquetInfo(bouquetSet);
           if (bouquetSet[1][0].price < bouquetSet[1][0].matchingPrice) {
             bouquetSet[1][0].channels.forEach(channelId => {
-              this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(
-                channel => channel._id !== channelId,
-              );
+              this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(channel => {
+                return channel._id !== channelId && channel.HdCounterpart !== channelId;
+              });
             });
             this.price += bouquetSet[1][0].price;
+            this.channelCount += bouquetSet[1][0].channelCount;
             this.selectedBouquets.push(bouquetSet[1][0]);
           } else {
             this.checkedChannels[bouquetSet[0]].forEach(channel => {
-              console.log(channel.name);
               this.price += channel.alcPrice;
+              this.channelCount += channel.quality === 'HD' ? 2 : 1;
               this.alcChannels.push(channel);
             });
             this.checkedChannels[bouquetSet[0]] = [];
           }
         }
       });
+      this.price += this.channelCount < 200 ? 130 : 160;
+      this.price *= 1.18;
     },
     calcBouquetInfo(bouquetSet) {
       bouquetSet[1].forEach(bouquet => {
@@ -77,7 +83,7 @@ export default {
         if (b1.matching > b2.matching) {
           return -1;
         } else if (b1.matching === b2.matching) {
-          if (b1.matchingPrice - b1.price < b2.matchingPrice - b1.price) {
+          if (b1.matchingPrice - b1.price > b2.matchingPrice - b2.price) {
             return -1;
           } else {
             return 1;
