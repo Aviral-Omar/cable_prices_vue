@@ -2,6 +2,20 @@
   <section class="card" id="price-card">
     <h3>Price: {{ price }}</h3>
     <button @click="calculatePrice">Calculate Price</button>
+    <section class="detail-section">
+      <div>
+        <h4>Bouquets</h4>
+        <ul>
+          <li v-for="bouquet of selectedBouquets" :key="bouquet._id">{{ bouquet.name }} (₹{{ bouquet.price }})</li>
+        </ul>
+      </div>
+      <div>
+        <h4>A la carte Channels</h4>
+        <ul>
+          <li v-for="channel of alcChannels" :key="channel._id">{{ channel.name }} (₹{{ channel.alcPrice }})</li>
+        </ul>
+      </div>
+    </section>
   </section>
 </template>
 
@@ -12,11 +26,15 @@ export default {
     return {
       price: 0,
       checkedChannels: {},
+      selectedBouquets: [],
+      alcChannels: [],
     };
   },
   methods: {
     calculatePrice() {
       this.price = 0;
+      this.selectedBouquets = [];
+      this.alcChannels = [];
       Object.entries(this.channels).forEach(channelSet => {
         this.checkedChannels[channelSet[0]] = channelSet[1].filter(channel => channel.isChecked);
       });
@@ -30,11 +48,12 @@ export default {
               );
             });
             this.price += bouquetSet[1][0].price;
-            console.log(bouquetSet[1][0].name);
+            this.selectedBouquets.push(bouquetSet[1][0]);
           } else {
             this.checkedChannels[bouquetSet[0]].forEach(channel => {
               console.log(channel.name);
               this.price += channel.alcPrice;
+              this.alcChannels.push(channel);
             });
             this.checkedChannels[bouquetSet[0]] = [];
           }
@@ -89,5 +108,12 @@ button {
   padding: 0.5rem;
   border-radius: 0.5rem;
   color: white;
+}
+
+.detail-section {
+  display: flex;
+  width: 100%;
+  flex-flow: row wrap;
+  justify-content: space-between;
 }
 </style>
