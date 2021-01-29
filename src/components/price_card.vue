@@ -42,18 +42,35 @@ export default {
         this.checkedChannels[channelSet[0]] = channelSet[1].filter(channel => channel.isChecked);
       });
       Object.entries(this.bouquets).forEach(bouquetSet => {
+        console.log(bouquetSet[0]);
         while (this.checkedChannels[bouquetSet[0]].length !== 0) {
           this.calcBouquetInfo(bouquetSet);
-          if (bouquetSet[1][0].price < bouquetSet[1][0].matchingPrice) {
-            bouquetSet[1][0].channels.forEach(channelId => {
-              this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(channel => {
-                return channel._id !== channelId && channel.HdCounterpart !== channelId;
+          let bouquetUsed = false;
+          for (let i = 0; i < bouquetSet[1].length; i++) {
+            if (bouquetSet[1][i].price < bouquetSet[1][i].matchingPrice) {
+              bouquetSet[1][i].channels.forEach(channelId => {
+                this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(channel => {
+                  return channel._id !== channelId && channel.HdCounterpart !== channelId;
+                });
               });
-            });
-            this.price += bouquetSet[1][0].price;
-            this.channelCount += bouquetSet[1][0].channelCount;
-            this.selectedBouquets.push(bouquetSet[1][0]);
-          } else {
+              this.price += bouquetSet[1][i].price;
+              this.channelCount += bouquetSet[1][i].channelCount;
+              this.selectedBouquets.push(bouquetSet[1][i]);
+              bouquetUsed = true;
+              break;
+            }
+          }
+          // if (bouquetSet[1][0].price < bouquetSet[1][0].matchingPrice) {
+          //   bouquetSet[1][0].channels.forEach(channelId => {
+          //     this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(channel => {
+          //       return channel._id !== channelId && channel.HdCounterpart !== channelId;
+          //     });
+          //   });
+          //   this.price += bouquetSet[1][0].price;
+          //   this.channelCount += bouquetSet[1][0].channelCount;
+          //   this.selectedBouquets.push(bouquetSet[1][0]);
+          // }
+          if (!bouquetUsed) {
             this.checkedChannels[bouquetSet[0]].forEach(channel => {
               this.price += channel.alcPrice;
               this.channelCount += channel.quality === 'HD' ? 2 : 1;
@@ -71,10 +88,14 @@ export default {
         bouquet.matching = 0;
         bouquet.matchingPrice = 0;
         bouquet.channels.forEach(channelId => {
-          this.checkedChannels[bouquetSet[0]].find(channel => {
+          this.checkedChannels[bouquetSet[0]].forEach(channel => {
             if (channel._id === channelId) {
               bouquet.matching++;
               bouquet.matchingPrice += channel.alcPrice;
+            } else if (channel.HdCounterpart === channelId) {
+              const HdCounterpart = this.channels[bouquetSet[0]].find(ch => ch._id === channelId);
+              bouquet.matching++;
+              bouquet.matchingPrice += HdCounterpart.alcPrice;
             }
           });
         });
@@ -85,6 +106,12 @@ export default {
         } else if (b1.matching === b2.matching) {
           if (b1.matchingPrice - b1.price > b2.matchingPrice - b2.price) {
             return -1;
+          } else if (b1.matchingPrice - b1.price === b2.matchingPrice - b2.price) {
+            if (b1.channels.length < b2.channels.length) {
+              return -1;
+            } else {
+              return 1;
+            }
           } else {
             return 1;
           }

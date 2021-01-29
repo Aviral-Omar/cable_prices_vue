@@ -63,6 +63,11 @@ export default {
           }
           this.bouquets[bouquet.provider].push(bouquet);
         });
+        this.providers.forEach(provider => {
+          if (!this.bouquets[provider._id]) {
+            this.bouquets[provider._id] = [];
+          }
+        });
       } catch (err) {
         console.log(err);
       }
