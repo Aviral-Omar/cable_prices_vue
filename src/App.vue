@@ -1,4 +1,5 @@
 <template>
+  <app-header></app-header>
   <section id="channel-lists">
     <h2 v-if="isLoading">Loading...</h2>
     <h2 v-else-if="providers.length === 0">No providers!</h2>
@@ -16,12 +17,13 @@
 </template>
 
 <script>
+import Header from './components/header.vue';
 import ChannelList from './components/channel_list.vue';
 import PriceCard from './components/price_card.vue';
 
 export default {
   name: 'App',
-  components: [ChannelList, PriceCard],
+  components: [Header, ChannelList, PriceCard],
   data() {
     return {
       isLoading: false,
@@ -114,10 +116,16 @@ body {
 .card h3,
 .card h2 {
   margin: 0;
+  font-weight: normal;
+}
+
+.card h3 {
+  margin: 1rem 0;
 }
 
 .card ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 </style>

@@ -3,8 +3,8 @@
     <h3 v-if="channels.length === 0">No channels!</h3>
     <div v-else>
       <h2>{{ provider.name }}</h2>
+      <h3 v-if="hdChannels.length !== 0">HD Channels</h3>
       <ul>
-        <h4 v-if="hdChannels.length !== 0">HD Channels</h4>
         <li v-for="channel in hdChannels" :key="channel._id">
           <input
             type="checkbox"
@@ -15,7 +15,9 @@
           />
           <label :for="channel._id">{{ channel.name }}</label>
         </li>
-        <h4 v-if="sdChannels.length !== 0">SD Channels</h4>
+      </ul>
+      <ul>
+        <h3 v-if="sdChannels.length !== 0">SD Channels</h3>
         <li v-for="channel in sdChannels" :key="channel._id">
           <input
             type="checkbox"

@@ -127,7 +127,12 @@ export default {
 }
 
 #price-card h3 {
-  margin-bottom: 1rem;
+  margin: 0 0 1rem 0;
+}
+
+#price-card h4 {
+  font-size: 120%;
+  font-weight: normal;
 }
 
 button {
