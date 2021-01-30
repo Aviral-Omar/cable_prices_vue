@@ -60,16 +60,6 @@ export default {
               break;
             }
           }
-          // if (bouquetSet[1][0].price < bouquetSet[1][0].matchingPrice) {
-          //   bouquetSet[1][0].channels.forEach(channelId => {
-          //     this.checkedChannels[bouquetSet[0]] = this.checkedChannels[bouquetSet[0]].filter(channel => {
-          //       return channel._id !== channelId && channel.HdCounterpart !== channelId;
-          //     });
-          //   });
-          //   this.price += bouquetSet[1][0].price;
-          //   this.channelCount += bouquetSet[1][0].channelCount;
-          //   this.selectedBouquets.push(bouquetSet[1][0]);
-          // }
           if (!bouquetUsed) {
             this.checkedChannels[bouquetSet[0]].forEach(channel => {
               this.price += channel.alcPrice;
@@ -89,6 +79,7 @@ export default {
         bouquet.matchingPrice = 0;
         bouquet.channels.forEach(channelId => {
           this.checkedChannels[bouquetSet[0]].forEach(channel => {
+            //TODO fix splitting pack and a la carte
             if (channel._id === channelId) {
               bouquet.matching++;
               bouquet.matchingPrice += channel.alcPrice;
@@ -100,13 +91,17 @@ export default {
           });
         });
       });
+      let totalAlcPrice = 0;
+      this.checkedChannels[bouquetSet[0]].forEach(channel => {
+        totalAlcPrice += channel.alcPrice;
+      });
       bouquetSet[1].sort((b1, b2) => {
-        if (b1.matching > b2.matching) {
+        if (totalAlcPrice - b1.matchingPrice + b1.price < totalAlcPrice - b2.matchingPrice + b2.price) {
           return -1;
-        } else if (b1.matching === b2.matching) {
-          if (b1.matchingPrice - b1.price > b2.matchingPrice - b2.price) {
+        } else if (totalAlcPrice - b1.matchingPrice + b1.price === totalAlcPrice - b2.matchingPrice + b2.price) {
+          if (b1.matching > b2.matching) {
             return -1;
-          } else if (b1.matchingPrice - b1.price === b2.matchingPrice - b2.price) {
+          } else if (b1.matching === b2.matching) {
             if (b1.channels.length < b2.channels.length) {
               return -1;
             } else {
