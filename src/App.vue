@@ -39,8 +39,8 @@ export default {
   methods: {
     async getData() {
       try {
-        this.providers = await (await fetch('http://localhost:3000/providers')).json();
-        const chList = await (await fetch('http://localhost:3000/channels')).json();
+        this.providers = await (await fetch('https://morning-hollows-36154.herokuapp.com/providers')).json();
+        const chList = await (await fetch('https://morning-hollows-36154.herokuapp.com/channels')).json();
         chList.forEach(channel => {
           if (!this.channels[channel.provider]) {
             this.channels[channel.provider] = [];
@@ -50,7 +50,7 @@ export default {
             isChecked: false,
           });
         });
-        const bqList = await (await fetch('http://localhost:3000/bouquets')).json();
+        const bqList = await (await fetch('https://morning-hollows-36154.herokuapp.com/bouquets')).json();
         bqList.forEach(bouquet => {
           bouquet.channelCount = 0;
           bouquet.channels.forEach(channel => {
