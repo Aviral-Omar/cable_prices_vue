@@ -1,8 +1,7 @@
 <template>
   <section class="card" id="price-card">
-    <h3>Price: {{ price }}</h3>
+    <h3>Price: {{ price.toFixed(2) }}</h3>
     <h3>Number of Channels: {{ channelCount }}</h3>
-    <button @click="calculatePrice">Calculate Price</button>
     <section class="detail-section">
       <div>
         <h4>Bouquets</h4>
@@ -79,7 +78,6 @@ export default {
         bouquet.matchingPrice = 0;
         bouquet.channels.forEach(channelId => {
           this.checkedChannels[bouquetSet[0]].forEach(channel => {
-            //TODO fix splitting pack and a la carte
             if (channel._id === channelId) {
               bouquet.matching++;
               bouquet.matchingPrice += channel.alcPrice;
@@ -116,6 +114,14 @@ export default {
       });
     },
   },
+  watch: {
+    channels: {
+      deep: true,
+      handler() {
+        this.calculatePrice();
+      },
+    },
+  },
 };
 </script>
 
@@ -133,14 +139,6 @@ export default {
 #price-card h4 {
   font-size: 120%;
   font-weight: normal;
-}
-
-button {
-  background-color: cornflowerblue;
-  border: 2px solid black;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  color: white;
 }
 
 .detail-section {
