@@ -78,13 +78,9 @@ export default {
         bouquet.matchingPrice = 0;
         bouquet.channels.forEach(channelId => {
           this.checkedChannels[bouquetSet[0]].forEach(channel => {
-            if (channel._id === channelId) {
+            if (channel._id === channelId || channel.HdCounterpart === channelId) {
               bouquet.matching++;
               bouquet.matchingPrice += channel.alcPrice;
-            } else if (channel.HdCounterpart === channelId) {
-              const HdCounterpart = this.channels[bouquetSet[0]].find(ch => ch._id === channelId);
-              bouquet.matching++;
-              bouquet.matchingPrice += HdCounterpart.alcPrice;
             }
           });
         });
